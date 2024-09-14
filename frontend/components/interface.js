@@ -51,7 +51,7 @@ const Interface = () => {
         }
 
     };
-    /*
+    
     const depositEther = async () => {
         updateDepositButtonState(ButtonState.Disabled);
 
@@ -101,7 +101,7 @@ const Interface = () => {
 
         updateDepositButtonState(ButtonState.Normal);
     };
-    */
+    
     return (
         <div>
 
