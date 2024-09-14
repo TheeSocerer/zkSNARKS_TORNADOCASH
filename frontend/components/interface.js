@@ -2,7 +2,7 @@ import { useState } from "react";
 import $u from '../utils/$u.js';
 import { ethers } from "ethers";
 
-// const wc = require("../circuit/witness_calculator.js");
+import wc from "../circuit/witness_calculator.js";
 
 // const tornadoAddress = "";
 
@@ -53,7 +53,7 @@ const Interface = () => {
     };
     
     const depositEther = async () => {
-        updateDepositButtonState(ButtonState.Disabled);
+        // updateDepositButtonState(ButtonState.Disabled);
 
         const secret = ethers.BigNumber.from(ethers.utils.randomBytes(32)).toString();
         const nullifier = ethers.BigNumber.from(ethers.utils.randomBytes(32)).toString();
@@ -62,6 +62,8 @@ const Interface = () => {
             secret: $u.BN256ToBin(secret).split(""),
             nullifier: $u.BN256ToBin(nullifier).split("")
         };
+
+        console.log(input);
 
         var res = await fetch("/deposit.wasm");
         var buffer = await res.arrayBuffer();
@@ -72,6 +74,11 @@ const Interface = () => {
         const commitment = r[1];
         const nullifierHash = r[2];
 
+
+        console.log(commitment)
+        console.log(nullifierHash)
+
+
         const value = ethers.BigNumber.from("100000000000000000").toHexString();
 
         const tx = {
@@ -81,25 +88,25 @@ const Interface = () => {
             data: tornadoInterface.encodeFunctionData("deposit", [commitment])
         };
 
-        try{
-            const txHash = await window.ethereum.request({ method: "eth_sendTransaction", params: [tx] });
+        // try{
+        //     const txHash = await window.ethereum.request({ method: "eth_sendTransaction", params: [tx] });
 
-            const proofElements = {
-                nullifierHash: `${nullifierHash}`,
-                secret: secret,
-                nullifier: nullifier,
-                commitment: `${commitment}`,
-                txHash: txHash
-            };
+        //     const proofElements = {
+        //         nullifierHash: `${nullifierHash}`,
+        //         secret: secret,
+        //         nullifier: nullifier,
+        //         commitment: `${commitment}`,
+        //         txHash: txHash
+        //     };
 
-            console.log(proofElements);
+        //     console.log(proofElements);
 
-            updateProofElements(btoa(JSON.stringify(proofElements)));
-        }catch(e){
-            console.log(e);
-        }
+        //     updateProofElements(btoa(JSON.stringify(proofElements)));
+        // }catch(e){
+        //     console.log(e);
+        // }
 
-        updateDepositButtonState(ButtonState.Normal);
+        // updateDepositButtonState(ButtonState.Normal);
     };
     
     return (
@@ -137,6 +144,8 @@ const Interface = () => {
             </nav>
 
             <div style={{ height: "60px" }}></div>
+            
+            <button onClick={depositEther}>Deposit</button>
 
            
         </div>
